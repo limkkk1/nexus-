@@ -76,12 +76,16 @@
     const networks = {
       '392': { rpc: 'https://nexus.rpc.caldera.xyz/http', name: 'Test2' },
       '393': { rpc: 'https://nexus-new.rpc.caldera.xyz/http', name: 'Devnet NEX' },
-      '3940': { rpc: 'https://nexus-testnet.g.alchemy.com/public', name: 'Test3' }
+      '3945': { 
+        rpc: 'https://testnet.rpc.nexus.xyz', 
+        name: 'Nexus Testnet', 
+        explorer: 'https://nexus.testnet.blockscout.com' 
+      }
     };
 
     const web3_392 = new Web3(networks['392'].rpc);
     const web3_393 = new Web3(networks['393'].rpc);
-    const web3_3940 = new Web3(networks['3940'].rpc);
+    const web3_3945 = new Web3(networks['3945'].rpc);
 
     function truncateAddress(address) {
       return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -118,7 +122,7 @@
                 <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">Address</th>
                 <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['392'].name} Balance (NEX)</th>
                 <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['393'].name} Balance (NEX)</th>
-                <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['3940'].name} Balance (NEX)</th>
+                <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['3945'].name} Balance (NEX)</th>
               </tr>
             </thead>
             <tbody class="bg-white/40 divide-y divide-white/30 backdrop-blur-sm">
@@ -126,20 +130,20 @@
 
       try {
         for (const address of addresses) {
-          const [balance_392, balance_393, balance_3940] = await Promise.all([
+          const [balance_392, balance_393, balance_3945] = await Promise.all([
             web3_392.eth.getBalance(address).catch(e => '0'),
             web3_393.eth.getBalance(address).catch(e => '0'),
-            web3_3940.eth.getBalance(address).catch(e => '0')
+            web3_3945.eth.getBalance(address).catch(e => '0')
           ]);
           const balanceNEX_392 = formatBalance(web3_392.utils.fromWei(balance_392, 'ether'));
           const balanceNEX_393 = formatBalance(web3_393.utils.fromWei(balance_393, 'ether'));
-          const balanceNEX_3940 = formatBalance(web3_3940.utils.fromWei(balance_3940, 'ether'));
+          const balanceNEX_3945 = formatBalance(web3_3945.utils.fromWei(balance_3945, 'ether'));
           resultHtml += `
             <tr class="hover:bg-cyan-100/60 transition">
               <td class="px-4 py-2">${truncateAddress(address)}</td>
               <td class="px-4 py-2">${balanceNEX_392}</td>
               <td class="px-4 py-2">${balanceNEX_393}</td>
-              <td class="px-4 py-2">${balanceNEX_3940}</td>
+              <td class="px-4 py-2">${balanceNEX_3945}</td>
             </tr>
           `;
         }
