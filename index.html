@@ -23,43 +23,32 @@
       28% { text-shadow: -2px 2px 10px #00ffff, 2px -2px 10px #ff00ff; }
     }
     .scanline {
-      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
       background: linear-gradient(to bottom, transparent, #00ffff44);
-      animation: scan 8s linear infinite; pointer-events: none; z-index: 50;
+      animation: scan 8s linear infinite;
+      pointer-events: none;
+      z-index: 50;
     }
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
     .glow-border { box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.2); }
     .matrix-rain {
-      position: fixed; inset: 0; z-index: 0; opacity: 0.08; pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.08;
+      pointer-events: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext y='30' font-size='30' fill='%2300ffff'%3E%CE%A9%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
       animation: rain 20s linear infinite;
     }
     @keyframes rain { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
-    /* 让两个输入区完全等高、等宽、对齐 */
-    .input-card {
-      @apply relative bg-black/70 border border-cyan-500/60 rounded-3xl p-8 backdrop-blur-xl;
-      min-height: 420px;
-      display: flex;
-      flex-direction: column;
-    }
-    .input-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 1.5rem;
-      padding: 2px;
-      background: linear-gradient(135deg, #00ffff, #ff00ff);
-      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0.4;
-    }
   </style>
 </head>
 <body class="relative min-h-screen text-cyan-100 overflow-x-hidden">
 
-  <div class="matrix- rain"></div>
+  <div class="matrix-rain"></div>
   <div class="scanline"></div>
 
   <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
@@ -88,49 +77,37 @@
             Nexus Points Check
           </h2>
           <a href="https://x.com/intent/follow?screen_name=lim51314" target="_blank"
-             class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-sm font-bold hover:scale-105 transition shadow-lg">
+             class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-purple-600 rounded-full text-sm font-bold hover:scale-105 transition">
             FOLLOW @lim51314
           </a>
         </div>
 
-        <!-- 两个完全等大的输入卡片 -->
-        <div class="grid md:grid-cols-2 gap-10 mb-10">
-
-          <!-- 左边：手动输入 -->
-          <div class="input-card group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-3xl blur-md opacity-40 group-hover:opacity-70 transition"></div>
-            <div class="relative h-full flex flex-col justify-between">
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-cyan-500 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition"></div>
+            <div class="relative bg-black/70 border border-cyan-500/60 rounded-2xl p-6">
               <label class="text-cyan-300 text-sm tracking-wider">WALLET ADDRESSES (0x...)</label>
-              <textarea id="address" rows="10" placeholder="0x..." 
-                class="mt-4 flex-1 bg-transparent border border-cyan-500/50 rounded-2xl px-4 py-4 text-cyan-100 placeholder-cyan-600 font-mono resize-none focus:border-cyan-300 outline-none"></textarea>
+              <textarea id="address" rows="8" placeholder="0x..." 
+                class="mt-3 w-full bg-transparent border-b-2 border-cyan-500/50 focus:border-cyan-300 outline-none text-cyan-100 placeholder-cyan-700 font-mono"></textarea>
               <button id="querySingle" 
-                class="mt-6 py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl font-bold text-lg tracking-wider hover:from-cyan-400 hover:to-blue-500 transition shadow-xl">
+                class="mt-6 w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold tracking-wider hover:from-cyan-400 hover:to-blue-500 transition glow-border">
                 SCAN SINGLE / MULTI
               </button>
             </div>
           </div>
 
-          <!-- 右边：批量上传 -->
-          <div class="input-card group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-md opacity-40 group-hover:opacity-70 transition"></div>
-            <div class="relative h-full flex flex-col justify-between">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-purple-500 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition"></div>
+            <div class="relative bg-black/70 border border-purple-500/60 rounded-2xl p-6">
               <label class="text-purple-300 text-sm tracking-wider">BULK UPLOAD (.txt)</label>
-              <div class="mt-4 flex-1 flex items-center justify-center border-2 border-dashed border-purple-500/50 rounded-2xl">
-                <input id="fileInput" type="file" accept=".txt" 
-                  class="w-full h-full opacity-0 cursor-pointer absolute"
-                  onchange="this.closest('div').querySelector('span').textContent = this.files[0]?.name || '未选择任何文件'"/>
-                <div class="text-center pointer-events-none">
-                  <p class="text-purple-400 text-lg">点击或拖拽文件到此处</p>
-                  <span class="block mt-3 text-purple-500 text-sm">未选择任何文件</span>
-                </div>
-              </div>
+              <input id="fileInput" type="file" accept=".txt" 
+                class="mt-3 w-full file:mr-4 file:py-3 file:px-6 file:rounded-lg file:bg-gradient-to-r file:from-purple-600 file:to-pink-600 file:border-0 file:text-white hover:file:from-purple-500 hover:file:to-pink-500 cursor-pointer"/>
               <button id="queryBatch" 
-                class="mt-6 py-5 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl font-bold text-lg tracking-wider hover:from-purple-400 hover:to-pink-500 transition shadow-xl">
+                class="mt-6 w-full py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl font-bold tracking-wider hover:from-purple-400 hover:to-pink-500 transition glow-border">
                 BULK SCAN
               </button>
             </div>
           </div>
-
         </div>
 
         <div id="result" class="mt-10">
@@ -146,9 +123,12 @@
 
       </div>
     </div>
+
+    <div class="mt-16 text-center text-cyan-600 text-sm opacity-60">
+      NEXUS NETWORK MULTI-CHAIN BALANCE CHECKER · POWERED BY CALDERA & BLOCKSCOUT
+    </div>
   </div>
 
-  <!-- 保持你最新的带错误提示的 JS 代码（已包含查询失败显示原因） -->
   <script>
     const networks = {
       '392': { rpc: 'https://nexus.rpc.caldera.xyz/http', name: 'Test2' },
@@ -173,13 +153,16 @@
       const status = document.getElementById('status');
       resultContent.innerHTML = message;
       if (type === 'error') {
-        status.textContent = 'ERROR'; status.className = 'text-red-400';
+        status.textContent = 'ERROR';
+        status.className = 'text-red-400';
         resultContent.className = "bg-red-900/30 border-red-500/50 text-red-300 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
       } else if (type === 'info') {
-        status.textContent = 'SCANNING...'; status.className = 'text-yellow-400 animate-pulse';
+        status.textContent = 'SCANNING...';
+        status.className = 'text-yellow-400 animate-pulse';
         resultContent.className = "bg-cyan-900/30 border-cyan-500/50 text-cyan-300 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
       } else {
-        status.textContent = 'COMPLETE'; status.className = 'text-green-400';
+        status.textContent = 'COMPLETE';
+        status.className = 'text-green-400';
         resultContent.className = "bg-black/50 border border-cyan-800/50 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
       }
     }
@@ -203,6 +186,7 @@
         showResult('No valid wallet addresses found！', 'error');
         return;
       }
+
       showResult(`Scanning ${addresses.length} addresses...`, 'info');
 
       let resultHtml = `
@@ -226,9 +210,9 @@
           getBalanceWithError(web3_3945, 'Nexus Testnet', addr)
         ]);
 
-        const b392 = r392.success ? r392.balance : `<span class="text-red-400 text-xs">${r392.error}</span>`;
-        const b393 = r393.success ? r393.balance : `<span class="text-red-400 text-xs">${r393.error}</span>`;
-        const b3945 = r3945.success ? r3945.balance : `<span class="text-red-400 text-xs">${r3945.error}</span>`;
+        const b392 = r392.success ? r392.balance : `<span class="text-red-400 text-xs">${r392.error || 'Failed'}</span>`;
+        const b393 = r393.success ? r393.balance : `<span class="text-red-400 text-xs">${r393.error || 'Failed'}</span>`;
+        const b3945 = r3945.success ? r3945.balance : `<span class="text-red-400 text-xs">${r3945.error || 'Failed'}</span>`;
 
         resultHtml += `
           <tr class="hover:bg-cyan-900/30 transition">
@@ -245,7 +229,9 @@
 
     document.getElementById('querySingle').addEventListener('click', async () => {
       const input = document.getElementById('address').value.trim();
-      const addresses = input.split('\n').map(a => a.trim()).filter(a => a && web3_392.utils.isAddress(a));
+      const addresses = input.split('\n')
+        .map(a => a.trim())
+        .filter(a => a && web3_392.utils.isAddress(a));
       await queryAddresses(addresses);
     });
 
@@ -258,7 +244,9 @@
       const file = fileInput.files[0];
       const reader = new FileReader();
       reader.onload = async e => {
-        const addresses = e.target.result.split('\n').map(a => a.trim()).filter(a => a && web3_392.utils.isAddress(a));
+        const addresses = e.target.result.split('\n')
+          .map(a => a.trim())
+          .filter(a => a && web3_392.utils.isAddress(a));
         await queryAddresses(addresses);
       };
       reader.readAsText(file);
