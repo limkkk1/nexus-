@@ -1,86 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nexus Wallet Bulk Balance Checker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS PRO · Bulk Balance Scanner</title>
   <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Exo 2', sans-serif;
+      background: #0a0e17;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 255, 0.15) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(0, 204, 255, 0.15) 0%, transparent 20%),
+        radial-gradient(circle at 50% 50%, rgba(9, 19, 41, 0.8) 0%, #0a0e17 100%);
+    }
+    .glitch { animation: glitch 3s infinite; }
+    @keyframes glitch {
+      0%,100% { text-shadow: 2px 2px 10px #00ffff, -2px -2px 10px #ff00ff; }
+      14% { text-shadow: 2px -2px 10px #00ffff, -2px 2px 10px #ff00ff; }
+      28% { text-shadow: -2px 2px 10px #00ffff, 2px -2px 10px #ff00ff; }
+    }
+    .scanline {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(to bottom, transparent, #00ffff44);
+      animation: scan 8s linear infinite;
+      pointer-events: none;
+      z-index: 50;
+    }
+    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+    .glow-border { box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.2); }
+    .matrix-rain {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.08;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext y='30' font-size='30' fill='%2300ffff'%3E%CE%A9%3C/text%3E%3C/svg%3E");
+      background-repeat: repeat;
+      animation: rain 20s linear infinite;
+    }
+    @keyframes rain { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-cyan-100 via-blue-50 to-teal-100 relative overflow-hidden font-[Poppins]">
+<body class="relative min-h-screen text-cyan-100 overflow-x-hidden">
 
-  <!-- Soft floating lights -->
-  <div class="absolute inset-0 z-0 overflow-hidden">
-    <div class="w-[400px] h-[400px] bg-cyan-300/30 rounded-full blur-3xl absolute top-20 left-10 animate-pulse"></div>
-    <div class="w-[500px] h-[500px] bg-teal-300/30 rounded-full blur-3xl absolute bottom-0 right-0 animate-pulse"></div>
-  </div>
+  <div class="matrix-rain"></div>
+  <div class="scanline"></div>
 
-  <!-- Top Title -->
-  <div class="relative z-20 flex justify-center mb-10">
-    <div class="text-center">
-      <h1 class="text-6xl sm:text-7xl font-extrabold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent drop-shadow-md">
-        NEXUS
+  <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
+
+    <div class="mb-12 text-center">
+      <h1 class="text-7xl md:text-9xl font-black tracking-tighter glitch" style="font-family: 'Orbitron', sans-serif;">
+        NEXUS<span class="text-magenta-400">.PRO</span>
       </h1>
-      <p class="text-2xl sm:text-3xl font-semibold text-sky-700 mt-3 tracking-wide">
-        Cool & Clear ❄️
+      <p class="mt-4 text-xl md:text-2xl font-light tracking-widest text-cyan-300 opacity-80">
+        Bulk Balance Scanner // 0xNeural Interface
       </p>
-    </div>
-  </div>
-
-  <!-- Main Card -->
-  <div class="relative z-10 bg-white/40 backdrop-blur-2xl border border-white/30 p-6 sm:p-8 rounded-3xl shadow-xl w-full max-w-4xl transition hover:shadow-2xl">
-
-    <h1 class="text-3xl sm:text-4xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent drop-shadow-md">
-      Nexus Wallet Bulk Balance Checker
-    </h1>
-
-    <!-- Follow Author -->
-    <div class="mb-6 text-center">
-      <a href="https://x.com/intent/follow?screen_name=lim51314" target="_blank"
-        class="inline-block bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-lg hover:opacity-90 transition">
-        Follow Author (@lim51314)
-      </a>
+      <div class="mt-4 flex justify-center space-x-8 text-sm">
+        <span class="text-cyan-400">● ONLINE</span>
+        <span class="text-green-400 animate-pulse">CONNECTED</span>
+        <span class="text-yellow-400">v4.9.5</span>
+      </div>
     </div>
 
-    <!-- Single Address Query -->
-    <div class="mb-6">
-      <label for="address" class="block text-sm font-medium text-sky-800">Enter wallet addresses (one per line, 0x...)</label>
-      <textarea id="address" rows="5" placeholder="Enter wallet addresses, one per line (0x...)" 
-        class="mt-2 block w-full p-3 rounded-xl bg-white/40 text-sky-900 border border-white/50 placeholder-sky-400 backdrop-blur-sm focus:ring-2 focus:ring-cyan-400 outline-none"></textarea>
-      <button id="querySingle" 
-        class="mt-3 w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white py-3 rounded-xl shadow-md hover:shadow-lg hover:opacity-90 transition">
-        Check Balance
-      </button>
+    <div class="relative w-full max-w-5xl">
+      <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-70 animate-pulse"></div>
+      
+      <div class="relative bg-black/60 backdrop-blur-3xl border border-cyan-500/50 rounded-3xl p-8 md:p-12 glow-border">
+        
+        <div class="flex justify-between items-center mb-10">
+          <h2 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+            MULTI-CHAIN BALANCE SCANNER
+          </h2>
+          <a href="https://x.com/intent/follow?screen_name=lim51314" target="_blank"
+             class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-purple-600 rounded-full text-sm font-bold hover:scale-105 transition">
+            FOLLOW @lim51314
+          </a>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-cyan-500 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition"></div>
+            <div class="relative bg-black/70 border border-cyan-500/60 rounded-2xl p-6">
+              <label class="text-cyan-300 text-sm tracking-wider">WALLET ADDRESSES (0x...)</label>
+              <textarea id="address" rows="8" placeholder="0x..." 
+                class="mt-3 w-full bg-transparent border-b-2 border-cyan-500/50 focus:border-cyan-300 outline-none text-cyan-100 placeholder-cyan-700 font-mono"></textarea>
+              <button id="querySingle" 
+                class="mt-6 w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold tracking-wider hover:from-cyan-400 hover:to-blue-500 transition glow-border">
+                ▶ SCAN SINGLE / MULTI
+              </button>
+            </div>
+          </div>
+
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-purple-500 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition"></div>
+            <div class="relative bg-black/70 border border-purple-500/60 rounded-2xl p-6">
+              <label class="text-purple-300 text-sm tracking-wider">BULK UPLOAD (.txt)</label>
+              <input id="fileInput" type="file" accept=".txt" 
+                class="mt-3 w-full file:mr-4 file:py-3 file:px-6 file:rounded-lg file:bg-gradient-to-r file:from-purple-600 file:to-pink-600 file:border-0 file:text-white hover:file:from-purple-500 hover:file:to-pink-500 cursor-pointer"/>
+              <button id="queryBatch" 
+                class="mt-6 w-full py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl font-bold tracking-wider hover:from-purple-400 hover:to-pink-500 transition glow-border">
+                ⚡ BULK SCAN
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="result" class="mt-10">
+          <div class="flex items-center gap-4 mb-4">
+            <h3 class="text-2xl font-bold text-cyan-300">SCAN RESULTS</h3>
+            <div class="flex-1 h-px bg-gradient-to-r from-cyan-500 to-transparent"></div>
+            <span id="status" class="text-sm text-cyan-400 animate-pulse">READY</span>
+          </div>
+          <div id="resultContent" class="bg-black/50 border border-cyan-800/50 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl">
+            <p class="text-cyan-600 text-center">Enter addresses or upload file → Click scan</p>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Batch Query -->
-    <div class="mb-6">
-      <label for="fileInput" class="block text-sm font-medium text-sky-800">Upload address list (.txt, one address per line)</label>
-      <input id="fileInput" type="file" accept=".txt" 
-        class="mt-2 block w-full p-3 rounded-xl bg-white/40 text-sky-900 border border-white/50 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-cyan-400 file:text-white hover:file:bg-cyan-500 transition">
-      <button id="queryBatch" 
-        class="mt-3 w-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white py-3 rounded-xl shadow-md hover:shadow-lg hover:opacity-90 transition">
-        Bulk Check
-      </button>
-    </div>
-
-    <!-- Results -->
-    <div id="result" class="mt-6">
-      <h2 class="text-xl font-semibold text-center text-sky-800">Query Results</h2>
-      <div id="resultContent" class="mt-3 p-4 bg-white/40 border border-white/30 rounded-xl overflow-x-auto text-center text-sky-900 min-w-[300px] backdrop-blur-sm"></div>
+    <div class="mt-16 text-center text-cyan-600 text-sm opacity-60">
+      NEXUS NETWORK MULTI-CHAIN BALANCE CHECKER · POWERED BY CALDERA & BLOCKSCOUT
     </div>
   </div>
 
   <script>
-    // Network configuration
     const networks = {
       '392': { rpc: 'https://nexus.rpc.caldera.xyz/http', name: 'Test2' },
       '393': { rpc: 'https://nexus-new.rpc.caldera.xyz/http', name: 'Devnet NEX' },
-      '3945': { 
-        rpc: 'https://testnet.rpc.nexus.xyz', 
-        name: 'Nexus Testnet', 
-        explorer: 'https://nexus.testnet.blockscout.com' 
-      }
+      '3945': { rpc: 'https://testnet.rpc.nexus.xyz', name: 'Nexus Testnet', explorer: 'https://nexus.testnet.blockscout.com' }
     };
 
     const web3_392 = new Web3(networks['392'].rpc);
@@ -97,13 +151,16 @@
 
     function showResult(message, type) {
       const resultContent = document.getElementById('resultContent');
+      const status = document.getElementById('status');
       resultContent.innerHTML = message;
+      status.textContent = type === 'error' ? 'ERROR' : type === 'info' ? 'SCANNING...' : 'COMPLETE';
+      status.className = type === 'error' ? 'text-red-400' : type === 'info' ? 'text-yellow-400 animate-pulse' : 'text-green-400';
       if (type === 'error') {
-        resultContent.className = "mt-3 p-4 rounded-xl bg-red-100 text-red-700 border border-red-200";
+        resultContent.className = "bg-red-900/30 border-red-500/50 text-red-300 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
       } else if (type === 'info') {
-        resultContent.className = "mt-3 p-4 rounded-xl bg-cyan-100 text-cyan-700 border border-cyan-200";
+        resultContent.className = "bg-cyan-900/30 border-cyan-500/50 text-cyan-300 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
       } else {
-        resultContent.className = "mt-3 p-4 bg-white/40 border border-white/30 rounded-xl overflow-x-auto text-center text-sky-900 min-w-[300px] backdrop-blur-sm";
+        resultContent.className = "bg-black/50 border border-cyan-800/50 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
       }
     }
 
@@ -112,51 +169,45 @@
         showResult('Please enter or upload valid wallet addresses!', 'error');
         return;
       }
-
       showResult(`Checking ${addresses.length} address(es)...`, 'info');
       let resultHtml = `
         <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-center text-sky-900 rounded-xl overflow-hidden shadow-md">
-            <thead class="bg-gradient-to-r from-cyan-300/60 to-blue-300/60">
+          <table class="w-full border-collapse text-center text-cyan-100 rounded-xl overflow-hidden">
+            <thead class="bg-gradient-to-r from-cyan-900/80 to-purple-900/80">
               <tr>
-                <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">Address</th>
-                <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['392'].name} Balance (NEX)</th>
-                <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['393'].name} Balance (NEX)</th>
-                <th class="px-4 py-3 border-b border-white/30 text-sm sm:text-base font-semibold tracking-wide">${networks['3945'].name} Balance (NEX)</th>
+                <th class="px-4 py-3 text-sm font-bold">Address</th>
+                <th class="px-4 py-3 text-sm font-bold">${networks['392'].name} (NEX)</th>
+                <th class="px-4 py-3 text-sm font-bold">${networks['393'].name} (NEX)</th>
+                <th class="px-4 py-3 text-sm font-bold">${networks['3945'].name} (NEX)</th>
               </tr>
             </thead>
-            <tbody class="bg-white/40 divide-y divide-white/30 backdrop-blur-sm">
+            <tbody class="divide-y divide-cyan-900/50">
       `;
 
-      try {
-        for (const address of addresses) {
-          const [balance_392, balance_393, balance_3945] = await Promise.all([
-            web3_392.eth.getBalance(address).catch(e => '0'),
-            web3_393.eth.getBalance(address).catch(e => '0'),
-            web3_3945.eth.getBalance(address).catch(e => '0')
-          ]);
-          const balanceNEX_392 = formatBalance(web3_392.utils.fromWei(balance_392, 'ether'));
-          const balanceNEX_393 = formatBalance(web3_393.utils.fromWei(balance_393, 'ether'));
-          const balanceNEX_3945 = formatBalance(web3_3945.utils.fromWei(balance_3945, 'ether'));
-          resultHtml += `
-            <tr class="hover:bg-cyan-100/60 transition">
-              <td class="px-4 py-2">${truncateAddress(address)}</td>
-              <td class="px-4 py-2">${balanceNEX_392}</td>
-              <td class="px-4 py-2">${balanceNEX_393}</td>
-              <td class="px-4 py-2">${balanceNEX_3945}</td>
-            </tr>
-          `;
-        }
-        resultHtml += `</tbody></table></div>`;
-        showResult(resultHtml, 'success');
-      } catch (error) {
-        showResult(`Query failed: ${error.message}`, 'error');
+      for (const address of addresses) {
+        const [balance_392, balance_393, balance_3945] = await Promise.all([
+          web3_392.eth.getBalance(address).catch(() => '0'),
+          web3_393.eth.getBalance(address).catch(() => '0'),
+          web3_3945.eth.getBalance(address).catch(() => '0')
+        ]);
+        const b392 = formatBalance(web3_392.utils.fromWei(balance_392, 'ether'));
+        const b393 = formatBalance(web3_393.utils.fromWei(balance_393, 'ether'));
+        const b3945 = formatBalance(web3_3945.utils.fromWei(balance_3945, 'ether'));
+        resultHtml += `
+          <tr class="hover:bg-cyan-900/30 transition">
+            <td class="px-4 py-3 font-mono">${truncateAddress(address)}</td>
+            <td class="px-4 py-3">${b392}</td>
+            <td class="px-4 py-3">${b393}</td>
+            <td class="px-4 py-3">${b3945}</td>
+          </tr>`;
       }
+      resultHtml += `</tbody></table></div>`;
+      showResult(resultHtml, 'success');
     }
 
     document.getElementById('querySingle').addEventListener('click', async () => {
       const input = document.getElementById('address').value.trim();
-      const addresses = input.split('\n').map(addr => addr.trim()).filter(addr => addr && web3_392.utils.isAddress(addr));
+      const addresses = input.split('\n').map(a => a.trim()).filter(a => a && web3_392.utils.isAddress(a));
       await queryAddresses(addresses);
     });
 
@@ -166,11 +217,10 @@
         showResult('Please upload a text file with addresses!', 'error');
         return;
       }
-
       const file = fileInput.files[0];
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        const addresses = e.target.result.split('\n').map(addr => addr.trim()).filter(addr => addr && web3_392.utils.isAddress(addr));
+      reader.onload = async e => {
+        const addresses = e.target.result.split('\n').map(a => a.trim()).filter(a => a && web3_392.utils.isAddress(a));
         await queryAddresses(addresses);
       };
       reader.readAsText(file);
