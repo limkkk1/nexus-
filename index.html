@@ -48,16 +48,6 @@
       z-index: 0;
     }
 
-    /* scanline 降级，不再动画 */
-    .scanline {
-      position: absolute;
-      top: 120px;
-      left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(to bottom, transparent, #00ffff33);
-      z-index: 50;
-    }
-
     .card-glow {
       box-shadow: 
         0 0 25px rgba(0,255,255,0.3),
@@ -71,7 +61,6 @@
 <body class="relative min-h-screen text-cyan-100 overflow-x-hidden">
 
   <div class="matrix"></div>
-  <div class="scanline"></div>
 
   <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
 
@@ -87,7 +76,7 @@
       <div class="mt-4 flex justify-center space-x-8 text-sm">
         <span class="text-cyan-400">ONLINE</span>
         <span class="text-green-400 animate-pulse">CONNECTED</span>
-        <span class="text-yellow-400">v5.0.1</span>
+        <span class="text-yellow-400">v1.0</span>
       </div>
     </div>
 
@@ -137,7 +126,6 @@
         <div id="result" class="mt-10">
           <div class="flex items-center gap-4 mb-4">
             <h3 class="text-2xl font-bold text-cyan-300">SCAN RESULTS</h3>
-            <div class="flex-1 h-px bg-gradient-to-r from-cyan-500 to-transparent"></div>
             <span id="status" class="text-sm text-cyan-400">READY</span>
           </div>
           <div id="resultContent"
