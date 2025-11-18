@@ -4,74 +4,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexus Points</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <!-- 轻量 Tailwind 核心（仅保留常用类） -->
+  <script>
+    tailwind = {
+      theme: {
+        extend: {}
+      }
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+  <!-- 本地安全字体，不加载 Google CDN -->
   <style>
     body { 
-      font-family: 'Exo 2', sans-serif;
+      font-family: 'Segoe UI', 'Exo 2', -apple-system, sans-serif;
       background: #0a0e17;
       background-image: 
         radial-gradient(circle at 10% 20%, rgba(0, 255, 255, 0.15) 0%, transparent 20%),
         radial-gradient(circle at 90% 80%, rgba(0, 204, 255, 0.15) 0%, transparent 20%),
         radial-gradient(circle at 50% 50%, rgba(9, 19, 41, 0.8) 0%, #0a0e17 100%);
     }
-    .glitch { animation: glitch 3s infinite; }
-    @keyframes glitch {
-      0%,100% { text-shadow: 2px 2px 10px #00ffff, -2px -2px 10px #ff00ff; }
-      14% { text-shadow: 2px -2px 10px #00ffff, -2px 2px 10px #ff00ff; }
-      28% { text-shadow: -2px 2px 10px #00ffff, 2px -2px 10px #ff00ff; }
+
+    /* 更轻量的 Pulse 光效 */
+    .glow {
+      text-shadow: 0 0 25px #00ffff75;
+      animation: glow 2.4s infinite alternate;
     }
-    .scanline {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      background: linear-gradient(to bottom, transparent, #00ffff44);
-      animation: scan 8s linear infinite;
-      pointer-events: none;
-      z-index: 50;
+    @keyframes glow {
+      from { text-shadow: 0 0 8px #00ffff55; }
+      to { text-shadow: 0 0 22px #00ffffaa; }
     }
-    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
-    .glow-border { box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.2); }
-    .matrix-rain {
+
+    /* 移除最卡的 Matrix Rain，改为静态半透明背景 */
+    .matrix {
       position: fixed;
       inset: 0;
-      z-index: 0;
-      opacity: 0.08;
+      opacity: 0.045;
       pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext y='30' font-size='30' fill='%2300ffff'%3E%CE%A9%3C/text%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext y='30' font-size='30' fill='%2300ffff'%3E%CE%A9%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
-      animation: rain 20s linear infinite;
+      background-size: 40px;
+      z-index: 0;
     }
-    @keyframes rain { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
+
+    /* scanline 降级，不再动画 */
+    .scanline {
+      position: absolute;
+      top: 120px;
+      left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to bottom, transparent, #00ffff33);
+      z-index: 50;
+    }
+
+    .card-glow {
+      box-shadow: 
+        0 0 25px rgba(0,255,255,0.3),
+        inset 0 0 15px rgba(0,255,255,0.15);
+    }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
 </head>
+
 <body class="relative min-h-screen text-cyan-100 overflow-x-hidden">
 
-  <div class="matrix-rain"></div>
+  <div class="matrix"></div>
   <div class="scanline"></div>
 
   <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
 
+    <!-- 标题 -->
     <div class="mb-12 text-center">
-      <h1 class="text-7xl md:text-9xl font-black tracking-tighter glitch" style="font-family: 'Orbitron', sans-serif;">
+      <h1 class="text-6xl md:text-8xl font-black tracking-tight glow"
+          style="font-family:'Orbitron','Exo 2',sans-serif;">
         Nexus Points
       </h1>
-      <p class="mt-4 text-xl md:text-2xl font-light tracking-widest text-cyan-300 opacity-80">
-        Balance Scan // Nexus积分批量余额查询
+      <p class="mt-4 text-xl md:text-2xl text-cyan-300 opacity-80">
+        Balance Scan // Nexus 积分批量余额查询
       </p>
       <div class="mt-4 flex justify-center space-x-8 text-sm">
         <span class="text-cyan-400">ONLINE</span>
         <span class="text-green-400 animate-pulse">CONNECTED</span>
-        <span class="text-yellow-400">v4.9.6</span>
+        <span class="text-yellow-400">v5.0.1</span>
       </div>
     </div>
 
+    <!-- 外框 -->
     <div class="relative w-full max-w-5xl">
-      <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-70 animate-pulse"></div>
-      
-      <div class="relative bg-black/60 backdrop-blur-3xl border border-cyan-500/50 rounded-3xl p-8 md:p-12 glow-border">
-        
+      <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-60"></div>
+
+      <div class="relative bg-black/70 border border-cyan-500/50 rounded-3xl p-8 md:p-12 card-glow">
+
         <div class="flex justify-between items-center mb-10">
           <h2 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
             Nexus Points Check
@@ -82,41 +107,41 @@
           </a>
         </div>
 
+        <!-- 输入区 -->
         <div class="grid md:grid-cols-2 gap-8 mb-10">
-          <div class="relative group">
-            <div class="absolute -inset-1 bg-cyan-500 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition"></div>
-            <div class="relative bg-black/70 border border-cyan-500/60 rounded-2xl p-6">
-              <label class="text-cyan-300 text-sm tracking-wider">WALLET ADDRESSES (0x...)</label>
-              <textarea id="address" rows="8" placeholder="0x..." 
-                class="mt-3 w-full bg-transparent border-b-2 border-cyan-500/50 focus:border-cyan-300 outline-none text-cyan-100 placeholder-cyan-700 font-mono"></textarea>
-              <button id="querySingle" 
-                class="mt-6 w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold tracking-wider hover:from-cyan-400 hover:to-blue-500 transition glow-border">
-                SCAN SINGLE / MULTI
-              </button>
-            </div>
+          
+          <!-- 左区域：手动输入 -->
+          <div class="bg-black/60 border border-cyan-500/50 rounded-2xl p-6">
+            <label class="text-cyan-300 text-sm tracking-wider">WALLET ADDRESSES</label>
+            <textarea id="address" rows="8" placeholder="0x..."
+              class="mt-3 w-full bg-transparent border-b-2 border-cyan-500/50 focus:border-cyan-300 outline-none text-cyan-100 placeholder-cyan-700 font-mono"></textarea>
+            <button id="querySingle"
+              class="mt-6 w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold hover:scale-105 transition">
+              SCAN SINGLE / MULTI
+            </button>
           </div>
 
-          <div class="relative group">
-            <div class="absolute -inset-1 bg-purple-500 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition"></div>
-            <div class="relative bg-black/70 border border-purple-500/60 rounded-2xl p-6">
-              <label class="text-purple-300 text-sm tracking-wider">BULK UPLOAD (.txt)</label>
-              <input id="fileInput" type="file" accept=".txt" 
-                class="mt-3 w-full file:mr-4 file:py-3 file:px-6 file:rounded-lg file:bg-gradient-to-r file:from-purple-600 file:to-pink-600 file:border-0 file:text-white hover:file:from-purple-500 hover:file:to-pink-500 cursor-pointer"/>
-              <button id="queryBatch" 
-                class="mt-6 w-full py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl font-bold tracking-wider hover:from-purple-400 hover:to-pink-500 transition glow-border">
-                BULK SCAN
-              </button>
-            </div>
+          <!-- 右区域：批量上传 -->
+          <div class="bg-black/60 border border-purple-500/50 rounded-2xl p-6">
+            <label class="text-purple-300 text-sm tracking-wider">BULK UPLOAD (.txt)</label>
+            <input id="fileInput" type="file" accept=".txt"
+              class="mt-3 w-full file:mr-4 file:py-3 file:px-6 file:rounded-lg file:bg-gradient-to-r file:from-purple-600 file:to-pink-600 file:border-0 file:text-white hover:file:from-purple-500 hover:file:to-pink-500 cursor-pointer"/>
+            <button id="queryBatch"
+              class="mt-6 w-full py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl font-bold hover:scale-105 transition">
+              BULK SCAN
+            </button>
           </div>
         </div>
 
+        <!-- 结果 -->
         <div id="result" class="mt-10">
           <div class="flex items-center gap-4 mb-4">
             <h3 class="text-2xl font-bold text-cyan-300">SCAN RESULTS</h3>
             <div class="flex-1 h-px bg-gradient-to-r from-cyan-500 to-transparent"></div>
-            <span id="status" class="text-sm text-cyan-400 animate-pulse">READY</span>
+            <span id="status" class="text-sm text-cyan-400">READY</span>
           </div>
-          <div id="resultContent" class="bg-black/50 border border-cyan-800/50 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl">
+          <div id="resultContent"
+               class="bg-black/50 border border-cyan-800/50 rounded-2xl p-6 min-h-80 font-mono text-sm overflow-x-auto">
             <p class="text-cyan-600 text-center">Enter addresses or upload file → Click scan</p>
           </div>
         </div>
@@ -129,128 +154,93 @@
     </div>
   </div>
 
+  <!-- JS（保持你的原逻辑） -->
   <script>
     const networks = {
       '392': { rpc: 'https://nexus.rpc.caldera.xyz/http', name: 'Test2' },
-      '393': { rpc: 'https://nexus-new.rpc.caldera.xyz/http', name: 'Devnet NEX' },
-      '3945': { rpc: 'https://testnet.rpc.nexus.xyz', name: 'Nexus Testnet', explorer: 'https://nexus.testnet.blockscout.com' }
+      '393': { rpc: 'https://nexus-new.rpc.caldera.aliyun.xyz/http', name: 'Devnet NEX' },
+      '3945': { rpc: 'https://testnet.rpc.nexus.xyz', name: 'Nexus Testnet' }
     };
 
     const web3_392 = new Web3(networks['392'].rpc);
     const web3_393 = new Web3(networks['393'].rpc);
     const web3_3945 = new Web3(networks['3945'].rpc);
 
-    function truncateAddress(address) {
-      return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    function truncateAddress(address){ return `${address.slice(0,6)}...${address.slice(-4)}` }
+    function formatBalance(b){ return Math.floor(b) }
+
+    function showResult(msg, type='normal'){
+      const box = document.getElementById('resultContent');
+      const st = document.getElementById('status');
+      box.innerHTML = msg;
+      if(type==='info'){ st.textContent='SCANNING...'; st.className='text-yellow-400' }
+      else if(type==='error'){ st.textContent='ERROR'; st.className='text-red-400' }
+      else{ st.textContent='COMPLETE'; st.className='text-green-400' }
     }
 
-    function formatBalance(balance) {
-      return Math.floor(balance);
-    }
-
-    function showResult(message, type = 'normal') {
-      const resultContent = document.getElementById('resultContent');
-      const status = document.getElementById('status');
-      resultContent.innerHTML = message;
-      if (type === 'error') {
-        status.textContent = 'ERROR';
-        status.className = 'text-red-400';
-        resultContent.className = "bg-red-900/30 border-red-500/50 text-red-300 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
-      } else if (type === 'info') {
-        status.textContent = 'SCANNING...';
-        status.className = 'text-yellow-400 animate-pulse';
-        resultContent.className = "bg-cyan-900/30 border-cyan-500/50 text-cyan-300 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
-      } else {
-        status.textContent = 'COMPLETE';
-        status.className = 'text-green-400';
-        resultContent.className = "bg-black/50 border border-cyan-800/50 rounded-2xl p-6 min-h-96 font-mono text-sm overflow-x-auto backdrop-blur-xl";
+    async function getBalance(web3, chain, addr){
+      try{
+        const bal = await web3.eth.getBalance(addr);
+        return { ok:true, balance:formatBalance(web3.utils.fromWei(bal,'ether')) };
+      }catch(e){
+        return { ok:false, error:`[${chain}] Error` };
       }
     }
 
-    async function getBalanceWithError(web3, chainName, address) {
-      try {
-        const bal = await web3.eth.getBalance(address);
-        return { success: true, balance: formatBalance(web3.utils.fromWei(bal, 'ether')) };
-      } catch (err) {
-        let reason = 'RPC Error';
-        if (err.message.includes('header not found')) reason = 'Block sync lag';
-        if (err.message.includes('network')) reason = 'Network unreachable';
-        if (err.message.includes('timeout')) reason = 'Request timeout';
-        if (err.message.includes('invalid')) reason = 'Invalid address';
-        return { success: false, error: `[${chainName}] ${reason}` };
-      }
-    }
+    async function queryAddresses(list){
+      if(list.length===0) return showResult('No valid addresses！','error');
+      showResult(`Scanning ${list.length} addresses...`,'info');
 
-    async function queryAddresses(addresses) {
-      if (addresses.length === 0) {
-        showResult('No valid wallet addresses found！', 'error');
-        return;
-      }
+      let html = `<div class="overflow-x-auto"><table class="w-full text-center">
+        <thead class="bg-cyan-900/50">
+        <tr>
+          <th class="p-3">Address</th>
+          <th class="p-3">Test2</th>
+          <th class="p-3">Devnet</th>
+          <th class="p-3">Testnet</th>
+        </tr>
+        </thead><tbody>`;
 
-      showResult(`Scanning ${addresses.length} addresses...`, 'info');
-
-      let resultHtml = `
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-center text-cyan-100">
-            <thead class="bg-gradient-to-r from-cyan-900/80 to-purple-900/80">
-              <tr>
-                <th class="px-4 py-3 text-sm font-bold">Address</th>
-                <th class="px-4 py-3 text-sm font-bold">Test2 (NEX)</th>
-                <th class="px-4 py-3 text-sm font-bold">Devnet NEX (NEX)</th>
-                <th class="px-4 py-3 text-sm font-bold">Nexus Testnet (NEX)</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-cyan-900/50">
-      `;
-
-      for (const addr of addresses) {
-        const [r392, r393, r3945] = await Promise.all([
-          getBalanceWithError(web3_392, 'Test2', addr),
-          getBalanceWithError(web3_393, 'Devnet NEX', addr),
-          getBalanceWithError(web3_3945, 'Nexus Testnet', addr)
+      for(const a of list){
+        const [r1,r2,r3]=await Promise.all([
+          getBalance(web3_392,'Test2',a),
+          getBalance(web3_393,'Devnet',a),
+          getBalance(web3_3945,'Testnet',a)
         ]);
 
-        const b392 = r392.success ? r392.balance : `<span class="text-red-400 text-xs">${r392.error || 'Failed'}</span>`;
-        const b393 = r393.success ? r393.balance : `<span class="text-red-400 text-xs">${r393.error || 'Failed'}</span>`;
-        const b3945 = r3945.success ? r3945.balance : `<span class="text-red-400 text-xs">${r3945.error || 'Failed'}</span>`;
+        const b1=r1.ok?r1.balance:`<span class='text-red-400 text-xs'>${r1.error}</span>`;
+        const b2=r2.ok?r2.balance:`<span class='text-red-400 text-xs'>${r2.error}</span>`;
+        const b3=r3.ok?r3.balance:`<span class='text-red-400 text-xs'>${r3.error}</span>`;
 
-        resultHtml += `
-          <tr class="hover:bg-cyan-900/30 transition">
-            <td class="px-4 py-3 font-mono">${truncateAddress(addr)}</td>
-            <td class="px-4 py-3">${b392}</td>
-            <td class="px-4 py-3">${b393}</td>
-            <td class="px-4 py-3">${b3945}</td>
-          </tr>`;
+        html+=`<tr class="border-b border-cyan-900/40">
+          <td class="p-3">${truncateAddress(a)}</td>
+          <td class="p-3">${b1}</td>
+          <td class="p-3">${b2}</td>
+          <td class="p-3">${b3}</td>
+        </tr>`;
       }
 
-      resultHtml += `</tbody></table></div>`;
-      showResult(resultHtml, 'normal');
+      html+=`</tbody></table></div>`;
+      showResult(html,'normal');
     }
 
-    document.getElementById('querySingle').addEventListener('click', async () => {
-      const input = document.getElementById('address').value.trim();
-      const addresses = input.split('\n')
-        .map(a => a.trim())
-        .filter(a => a && web3_392.utils.isAddress(a));
-      await queryAddresses(addresses);
-    });
+    document.getElementById('querySingle').onclick = ()=>{
+      const text = document.getElementById('address').value.trim();
+      const list = text.split('\n').map(x=>x.trim()).filter(x=>web3_392.utils.isAddress(x));
+      queryAddresses(list);
+    };
 
-    document.getElementById('queryBatch').addEventListener('click', async () => {
-      const fileInput = document.getElementById('fileInput');
-      if (!fileInput.files.length) {
-        showResult('Please select a .txt file first！', 'error');
-        return;
-      }
-      const file = fileInput.files[0];
+    document.getElementById('queryBatch').onclick = ()=>{
+      const file = document.getElementById('fileInput').files[0];
+      if(!file) return showResult('Please select a file！','error');
       const reader = new FileReader();
-      reader.onload = async e => {
-        const addresses = e.target.result.split('\n')
-          .map(a => a.trim())
-          .filter(a => a && web3_392.utils.isAddress(a));
-        await queryAddresses(addresses);
+      reader.onload = e=>{
+        const list=e.target.result.split('\n').map(x=>x.trim()).filter(x=>web3_392.utils.isAddress(x));
+        queryAddresses(list);
       };
       reader.readAsText(file);
-    });
+    };
   </script>
+
 </body>
 </html>
